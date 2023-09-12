@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TextInput,
   Pressable,
   ScrollView,
@@ -49,11 +48,11 @@ export default function AbrirChamado({ navigation }) {
   const tempoFormatado = `${dataAtual.getHours()}:${dataAtual.getMinutes()}`;
 
   // GERADOR DE ID
-  const [itemId, setItemId] = useState('');
+  const [itemId, setItemId] = useState("");
 
   const gerarID = () => {
     const randomDigits = Math.floor(Math.random() * 1000000);
-    const paddedDigits = String(randomDigits).padStart(6, '0');
+    const paddedDigits = String(randomDigits).padStart(6, "0");
     const id = `ITEMM${paddedDigits}`;
     setItemId(id);
   };
@@ -92,7 +91,7 @@ export default function AbrirChamado({ navigation }) {
       });
   };
 
-  // INPUTS PADRONIZAADOS
+  // INPUTS PADRONIZADOS
   const TextField = ({ error, label, ...inputProps }) => (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
@@ -113,28 +112,28 @@ export default function AbrirChamado({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <NavBar navigation={navigation}></NavBar>
-      <View style={{ alignItems: "center", marginTop: 15 }}>
+      <View style={styles.viewPrincipal}>
         <ScrollView style={{ padding: 15 }}>
           <Text style={styles.titulo}>Abertura</Text>
           <Text style={styles.label}>Departamento</Text>
           <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          data={items}
-          search
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="Selecione um departamento"
-          searchPlaceholder="Search..."
-          value={dado}
-          onChange={item => {
-            setDado(item.value);
-            setValue("departamento", item.value)
-          }}
-        />
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            data={items}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder="Selecione um departamento"
+            searchPlaceholder="Search..."
+            value={dado}
+            onChange={(item) => {
+              setDado(item.value);
+              setValue("departamento", item.value);
+            }}
+          />
           <TextField
             label={"Titulo"}
             error={errors.titulo}
@@ -155,8 +154,6 @@ export default function AbrirChamado({ navigation }) {
           >
             <Text style={styles.btn_text_imagem}>Abrir Chamado</Text>
           </Pressable>
-
-          {<Text>{itemId}</Text>}
         </ScrollView>
       </View>
     </View>
@@ -172,7 +169,13 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
+    backgroundColor: "#152b69",
+  },
+  viewPrincipal: {
+    alignItems: "center",
+    marginTop: 15,
     backgroundColor: "white",
+    height: "100%",
   },
   container: {
     marginBottom: 10,
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "#006b3b",
+    backgroundColor: "#95CB63",
     width: 350,
     marginTop: 15,
   },
@@ -221,11 +224,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 12
+    marginBottom: 12,
   },
   placeholderStyle: {
     fontSize: 14,
-    color: 'gray'
+    color: "gray",
   },
   selectedTextStyle: {
     fontSize: 16,

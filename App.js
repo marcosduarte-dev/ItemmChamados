@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import AbrirChamado from './Components/AbrirChamado';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from "@react-navigation/native";
+import Triagem from "./Components/Triagem";
 
 const Drawer = createDrawerNavigator();
 
@@ -32,6 +33,7 @@ function DrawerNavigator() {
       }}
     >
       <Drawer.Screen name="Abertura" component={AbrirChamado} />
+      <Drawer.Screen name="Triagem" component={Triagem} />
     </Drawer.Navigator>
   );
 }
