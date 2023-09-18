@@ -6,10 +6,23 @@ import {
 } from "react-native";
 import NavBar from "./NavBar";
 import { TextInput } from "react-native-gesture-handler";
+import * as yup from "yup";
+
 
 export default function Login({ navigation }) {
 
+    const loginValidationShema = yup.object().shape({
+        usuário: yup
+            .string()
+            .required("Informe o seu usuário"),
+        senha: yup
+            .string()
+            .min(6, ({ min }) => 'A senha deve ter no mínimo 6 caracteres')
+            .required("Informe a sua senha"),
+    })
+
     return (
+
         <View style={styles.bg_itemm}>
             <NavBar navigation={navigation} />
             <View style={[{
@@ -17,7 +30,9 @@ export default function Login({ navigation }) {
             },
             styles.bg_white]}>
                 <Text style={styles.titulo}>Login</Text>
-                <View>
+
+                {/* Login fields */}
+                <View style={styles.login_flex}>
                     <Text>Usuário:</Text>
                     <TextInput
                         placeholder="user.name"
@@ -29,9 +44,15 @@ export default function Login({ navigation }) {
                         placeholder="******"
                         style={styles.input}
                     />
-                    <Pressable style={styles.btn_acessar} >
+
+                    <Pressable
+                        style={styles.btn_acessar} >
                         <Text style={styles.btn_text_imagem}>Acessar</Text>
                     </Pressable>
+                </View>
+                {/* Warning message for incorrect login */}
+                <View style={styles.warning_message}>
+                    <Text style={styles.warning_text}>Usuário ou senha incoretos.</Text>
 
                 </View>
 
@@ -42,7 +63,10 @@ export default function Login({ navigation }) {
 };
 const styles = StyleSheet.create({
     bg_itemm: {
-        backgroundColor: "#152b69"
+        backgroundColor: "#152b69",
+        flex: 1,
+
+
     },
     view: {
         marginBottom: 15,
@@ -98,7 +122,6 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         elevation: 3,
         backgroundColor: "#152C67",
-        width: 350,
         marginTop: 23,
     },
     btn_text_imagem: {
@@ -108,6 +131,19 @@ const styles = StyleSheet.create({
         letterSpacing: 0.25,
         color: "white",
     },
+    warning_message: {
+        backgroundColor: "#8C2A0B",
+        borderRadius: 8,
 
+    },
+    warning_text: {
+        color: "#022562",
+        fontSize: 16,
+        textAlign: "center",
+        margin: 24,
+    },
+    login_flex: {
+        flex: 0.8
+    },
 });
 
