@@ -1,8 +1,8 @@
+import "../config/firebase";
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import NavBar from "./NavBar";
 import { TextInput } from "react-native-gesture-handler";
 import * as yup from "yup";
-import "../config/firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 

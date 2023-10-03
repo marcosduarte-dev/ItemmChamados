@@ -1,4 +1,5 @@
 import "react-native-gesture-handler";
+import "./config/firebase";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import AbrirChamado from "./Components/AbrirChamado";
@@ -7,9 +8,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Triagem from "./Components/Triagem";
 import Login from "./Components/Login";
-import "./config/firebase";
 import { useAuthentication } from "./utils/hooks/useAuthentication";
 import { useEffect, useState } from "react";
+import MeusChamados from "./Components/Meus Chamados";
 
 const Drawer = createDrawerNavigator();
 
@@ -53,6 +54,13 @@ export default function App() {
               name="Triagem"
               component={Triagem}
               options={{ title: "Triagem" }}
+            />
+          ) : null}
+          {isUserLoggedIn ? (
+            <Drawer.Screen
+              name="MeusChamados"
+              component={MeusChamados}
+              options={{ title: "Meus Chamados" }}
             />
           ) : null}
         </Drawer.Navigator>
