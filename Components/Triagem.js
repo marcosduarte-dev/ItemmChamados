@@ -9,11 +9,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import NavBar from "./NavBar";
 import "../config/firebase";
 import { useAuthentication } from "../utils/hooks/useAuthentication";
+import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+
 
 export default function Triagem({ navigation }) {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   var user = useAuthentication();
+  const db = getFirestore();
 
   useEffect(() => {
     fetchData();
@@ -26,17 +29,16 @@ export default function Triagem({ navigation }) {
   );
 
   const fetchData = async () => {
-    try {
-      const response = await fetch(
-        "https://itemmchamados-default-rtdb.firebaseio.com/Chamados/.json"
-      );
-      const json = await response.json();
-      console.log("Buscou os dados!");
-      console.log(user)
-      setData(json);
-    } catch (error) {
-      console.error(error);
-    }
+    const ref = query(collection(db, "chamados"), where('status', '==', 'Aberto'))
+    const querySnapshot = await getDocs(ref);
+    const jsonData = {};
+
+    querySnapshot.forEach((doc) => {
+      const docData = doc.data();
+      const docId = doc.id;
+      jsonData[docId] = docData;
+    });
+    setData(jsonData);
   };
 
   return (
@@ -50,7 +52,7 @@ export default function Triagem({ navigation }) {
             dataAbertura,
             departamento,
             descricao,
-            id,
+            ID,
             status,
             titulo,
           } = data[idKey];
@@ -59,7 +61,7 @@ export default function Triagem({ navigation }) {
             return (
               <View key={idKey} style={styles.view}>
                 <View style={styles.viewID}>
-                  <Text style={styles.id}>{id}</Text>
+                  <Text style={styles.id}>{ID}</Text>
                 </View>
                 <View style={styles.line} />
                 <Text style={styles.mt5}>

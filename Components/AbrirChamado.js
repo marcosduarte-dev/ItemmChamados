@@ -12,6 +12,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import NavBar from "./NavBar";
 import { Dropdown } from "react-native-element-dropdown";
+import { collection, getFirestore, addDoc } from "firebase/firestore";
+import { useAuthentication } from "../utils/hooks/useAuthentication";
+
 
 export default function AbrirChamado({ navigation }) {
   // DropDown
@@ -57,38 +60,25 @@ export default function AbrirChamado({ navigation }) {
     setItemId(id);
   };
 
+  const db = getFirestore();
+  var user = useAuthentication();
+
   useEffect(() => {
     gerarID();
   }, []);
 
   // REALIZAR POST NO BANCO DE DADOS
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     gerarID();
-    const postData = {
-      id: itemId,
+    const docRef = await addDoc(collection(db, "chamados"), {
+      ID: itemId,
       titulo: data.titulo,
       descricao: data.descricao,
       departamento: data.departamento,
       status: "Aberto",
       dataAbertura: `${dataFormatada} ${tempoFormatado}`,
-    };
-
-    fetch("https://itemmchamados-default-rtdb.firebaseio.com/Chamados/.json", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(postData),
-    })
-      .then((response) => response.json())
-      .then((responseData) => {
-        console.log("Chamado aberto com Sucesso!:", responseData);
-        reset();
-        setImage(null);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      solicitante: user.user.email,
+    });
   };
 
   // INPUTS PADRONIZADOS
