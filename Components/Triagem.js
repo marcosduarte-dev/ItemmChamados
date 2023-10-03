@@ -7,10 +7,13 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import NavBar from "./NavBar";
+import "../config/firebase";
+import { useAuthentication } from "../utils/hooks/useAuthentication";
 
 export default function Triagem({ navigation }) {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  var user = useAuthentication();
 
   useEffect(() => {
     fetchData();
@@ -29,6 +32,7 @@ export default function Triagem({ navigation }) {
       );
       const json = await response.json();
       console.log("Buscou os dados!");
+      console.log(user)
       setData(json);
     } catch (error) {
       console.error(error);
