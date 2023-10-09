@@ -21,8 +21,6 @@ export default function Login({ navigation, updateUserLoggedIn }) {
   const db = getFirestore();
 
   const fetchData = async () => {
-    console.log("Entrou no fecthData")
-    console.log("value.email: " + value.email)
     const ref = query(
       collection(db, "usuarios"),
       where("email", "==", value.email)
@@ -59,7 +57,6 @@ export default function Login({ navigation, updateUserLoggedIn }) {
         ...value,
         error: error.message,
       });
-      console.log(error.message)
     }
   }
 

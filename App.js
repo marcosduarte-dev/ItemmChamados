@@ -27,7 +27,6 @@ export default function App() {
   useEffect(() => {
     const emailUsuario = AsyncStorage.getItem("email");
     if (emailUsuario != null) {
-      console.log(emailUsuario);
       updateUserLoggedIn(true);
     }
   }, []);
