@@ -16,7 +16,7 @@ import { collection, getFirestore, addDoc } from "firebase/firestore";
 import { useAuthentication } from "../utils/hooks/useAuthentication";
 
 
-export default function AbrirChamado({ navigation }) {
+export default function AbrirChamado({ navigation, user }) {
   // DropDown
   const items = [
     { label: "Pedagógico", value: "Pedagógico" },
@@ -61,7 +61,7 @@ export default function AbrirChamado({ navigation }) {
   };
 
   const db = getFirestore();
-  var user = useAuthentication();
+  // var user = useAuthentication();
 
   useEffect(() => {
     gerarID();

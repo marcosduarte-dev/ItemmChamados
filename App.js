@@ -4,13 +4,14 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import AbrirChamado from "./Components/AbrirChamado";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Triagem from "./Components/Triagem";
 import Login from "./Components/Login";
 import { useAuthentication } from "./utils/hooks/useAuthentication";
 import { useEffect, useState } from "react";
 import MeusChamados from "./Components/Meus Chamados";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAuth, signOut } from "firebase/auth";
 
 const Drawer = createDrawerNavigator();
 
@@ -22,6 +23,31 @@ export default function App() {
   const updateUserLoggedIn = (loggedIn) => {
     setUserLoggedIn(loggedIn);
   };
+
+  useEffect(() => {
+    const emailUsuario = AsyncStorage.getItem("email");
+    if (emailUsuario != null) {
+      console.log(emailUsuario);
+      updateUserLoggedIn(true);
+    }
+  }, []);
+
+  function Logout({ updateUserLoggedIn, navigation }) {
+    const auth = getAuth();
+  
+    const logout = () => {
+      signOut(auth);
+      updateUserLoggedIn(false);
+      navigation.goBack();
+    };
+  
+    useEffect(() => {
+      logout();
+    }, []);
+  
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <NavigationContainer>
@@ -35,19 +61,17 @@ export default function App() {
             headerStyle: { backgroundColor: "black" },
           }}
         >
-          {!isUserLoggedIn ? (
+          {/* {!isUserLoggedIn ? (
             <Drawer.Screen name="Login" options={{ title: "Login" }}>
               {(props) => (
                 <Login {...props} updateUserLoggedIn={updateUserLoggedIn} />
               )}
             </Drawer.Screen>
-          ) : null}
+          ) : null} */}
           {isUserLoggedIn ? (
-            <Drawer.Screen
-              name="Abertura"
-              component={AbrirChamado}
-              options={{ title: "Abertura" }}
-            />
+            <Drawer.Screen name="Abertura" options={{ title: "Abertura" }}>
+              {(props) => <AbrirChamado {...props} user={user} />}
+            </Drawer.Screen>
           ) : null}
           {isUserLoggedIn ? (
             <Drawer.Screen
@@ -59,10 +83,28 @@ export default function App() {
           {isUserLoggedIn ? (
             <Drawer.Screen
               name="MeusChamados"
-              component={MeusChamados}
               options={{ title: "Meus Chamados" }}
-            />
+            >
+              {(props) => <MeusChamados {...props} user={user} />}
+            </Drawer.Screen>
           ) : null}
+
+          {isUserLoggedIn ? (
+          <Drawer.Screen name="Logout">
+            {(props) => (
+              <Logout
+                {...props}
+                updateUserLoggedIn={updateUserLoggedIn}
+              />
+            )}
+          </Drawer.Screen>
+        ) : (
+          <Drawer.Screen name="Login" options={{ title: "Login" }}>
+            {(props) => (
+              <Login {...props} updateUserLoggedIn={updateUserLoggedIn} />
+            )}
+          </Drawer.Screen>
+        )}
         </Drawer.Navigator>
       </NavigationContainer>
       <StatusBar style="auto" />

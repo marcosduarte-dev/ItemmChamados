@@ -5,15 +5,39 @@ import { TextInput } from "react-native-gesture-handler";
 import * as yup from "yup";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
 
 const auth = getAuth();
 
 export default function Login({ navigation, updateUserLoggedIn }) {
+  const [data, setData] = useState([]);
   const [value, setValue] = useState({
     email: "",
     password: "",
     error: "",
   });
+
+  const db = getFirestore();
+
+  const fetchData = async () => {
+    console.log("Entrou no fecthData")
+    console.log("value.email: " + value.email)
+    const ref = query(
+      collection(db, "usuarios"),
+      where("email", "==", value.email)
+    );
+    const querySnapshot = await getDocs(ref);
+    const jsonData = {};
+
+    querySnapshot.forEach((doc) => {
+      const docData = doc.data();
+      const docId = doc.id;
+      jsonData[docId] = docData;
+    });
+    await AsyncStorage.setItem("departamento", jsonData[Object.keys(jsonData)[0]].departamento);
+    await AsyncStorage.setItem("permissao", jsonData[Object.keys(jsonData)[0]].permissao);
+  };
 
   async function signIn() {
     if (value.email === "" || value.password === "") {
@@ -26,7 +50,8 @@ export default function Login({ navigation, updateUserLoggedIn }) {
 
     try {
       await signInWithEmailAndPassword(auth, value.email, value.password);
-
+      await AsyncStorage.setItem("email", value.email);
+      await fetchData();
       updateUserLoggedIn(true);
       navigation.navigate("Triagem");
     } catch (error) {
@@ -34,6 +59,7 @@ export default function Login({ navigation, updateUserLoggedIn }) {
         ...value,
         error: error.message,
       });
+      console.log(error.message)
     }
   }
 
@@ -82,9 +108,13 @@ export default function Login({ navigation, updateUserLoggedIn }) {
           </Pressable>
         </View>
         {/* Warning message for incorrect login */}
-        <View style={styles.warning_message}>
-          <Text style={styles.warning_text}>Usuário ou senha incoretos.</Text>
-        </View>
+        {value.error != "" ? (
+          <View style={styles.warning_message}>
+            <Text style={styles.warning_text}>Usuário ou senha incorretos.</Text>
+          </View>
+        ) : 
+          null
+        }
       </View>
     </View>
   );
@@ -162,7 +192,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   warning_text: {
-    color: "#022562",
+    color: "#FFFFFFFF",
     fontSize: 16,
     textAlign: "center",
     margin: 24,

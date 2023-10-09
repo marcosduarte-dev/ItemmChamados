@@ -13,10 +13,10 @@ import {
   where,
 } from "firebase/firestore";
 
-export default function MeusChamados({ navigation }) {
+export default function MeusChamados({ navigation, user }) {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  var user = useAuthentication();
+  // var user = useAuthentication();
   const db = getFirestore();
 
   useEffect(() => {
