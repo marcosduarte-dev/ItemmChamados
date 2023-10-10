@@ -2,7 +2,6 @@ import "../config/firebase";
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import NavBar from "./NavBar";
 import { TextInput } from "react-native-gesture-handler";
-import * as yup from "yup";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -75,14 +74,6 @@ export default function Login({ navigation, updateUserLoggedIn }) {
     }
   }
 
-  const loginValidationShema = yup.object().shape({
-    usuário: yup.string().required("Informe o seu usuário"),
-    senha: yup
-      .string()
-      .min(6, ({ min }) => "A senha deve ter no mínimo 6 caracteres")
-      .required("Informe a sua senha"),
-  });
-
   return (
     <View style={styles.bg_itemm}>
       <NavBar navigation={navigation} />
@@ -96,8 +87,6 @@ export default function Login({ navigation, updateUserLoggedIn }) {
         ]}
       >
         <Text style={styles.titulo}>Login</Text>
-
-        {/* Login fields */}
         <View style={styles.login_flex}>
           <Text>Usuário:</Text>
           <TextInput
@@ -119,7 +108,6 @@ export default function Login({ navigation, updateUserLoggedIn }) {
             <Text style={styles.btn_text_imagem}>Acessar</Text>
           </Pressable>
         </View>
-        {/* Warning message for incorrect login */}
         {value.error != "" ? (
           <View style={styles.warning_message}>
             <Text style={styles.warning_text}>

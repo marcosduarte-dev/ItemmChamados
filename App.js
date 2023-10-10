@@ -64,13 +64,6 @@ export default function App() {
             headerStyle: { backgroundColor: "black" },
           }}
         >
-          {/* {!isUserLoggedIn ? (
-            <Drawer.Screen name="Login" options={{ title: "Login" }}>
-              {(props) => (
-                <Login {...props} updateUserLoggedIn={updateUserLoggedIn} />
-              )}
-            </Drawer.Screen>
-          ) : null} */}
           {isUserLoggedIn ? (
             <Drawer.Screen name="Abertura" options={{ title: "Abertura" }}>
               {(props) => <AbrirChamado {...props} user={user} />}

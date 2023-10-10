@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, Image } from "react-native";
-import { useFonts } from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function NavBar({ navigation }) {

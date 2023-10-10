@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import NavBar from "./NavBar";
 import "../config/firebase";
-import { useAuthentication } from "../utils/hooks/useAuthentication";
 import {
   collection,
   getDocs,
@@ -16,7 +15,6 @@ import {
 export default function MeusChamados({ navigation, user }) {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  // var user = useAuthentication();
   const db = getFirestore();
 
   useEffect(() => {

@@ -13,8 +13,6 @@ import * as yup from "yup";
 import NavBar from "./NavBar";
 import { Dropdown } from "react-native-element-dropdown";
 import { collection, getFirestore, addDoc } from "firebase/firestore";
-import { useAuthentication } from "../utils/hooks/useAuthentication";
-
 
 export default function AbrirChamado({ navigation, user }) {
   // DropDown
@@ -37,7 +35,6 @@ export default function AbrirChamado({ navigation, user }) {
   const {
     register,
     setValue,
-    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(fieldsValidationSchema) });
@@ -61,7 +58,6 @@ export default function AbrirChamado({ navigation, user }) {
   };
 
   const db = getFirestore();
-  // var user = useAuthentication();
 
   useEffect(() => {
     gerarID();
