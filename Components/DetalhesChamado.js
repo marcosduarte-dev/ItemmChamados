@@ -44,18 +44,27 @@ export default function detalhesChamado() {
 
             {/* Campos de detalhes do chamado */}
             <View>
-                <Text>Titulo</Text>
-                <TextInput></TextInput>
+                <TextField
+                    label={"Titulo"}
+                    error={errors.titulo}
+                    placeholderTextColor="grey"
+                />
 
-                <Text>Data de Abertura</Text>
-                <TextInput></TextInput>
-
-                <Text>Status</Text>
-                <TextInput></TextInput>
-
-                <Text>Solicitante</Text>
-                <TextInput></TextInput>
-                <TextField />
+                <TextField
+                    label={"Data abertura"}
+                    error={errors.data}
+                    placeholderTextColor="grey"
+                />
+                <TextField
+                    label={"Status"}
+                    error={errors.status}
+                    placeholderTextColor="grey"
+                />
+                <TextField
+                    label={"Soicitante"}
+                    error={errors.solicitante}
+                    placeholderTextColor="grey"
+                />
 
                 <Text>Analista</Text>
                 <Dropdown
@@ -82,11 +91,16 @@ export default function detalhesChamado() {
                     error={errors.descricao}
                     placeholder={"Descreva o seu problema"}
                     placeholderTextColor="grey"
-                
+
                 />
 
-                <Text>Mensagem</Text>
-                <TextInput></TextInput>
+                <TextField
+                    label={"Titulo"}
+                    error={errors.titulo}
+                    placeholder={"Digite o titulo do chamado"}
+                    placeholderTextColor="grey"
+                    onChangeText={(text) => setValue("titulo", text)}
+                />
                 <Pressable
                     style={styles.button_cadastrar}
                     onPress={handleSubmit(onSubmit)}>
@@ -95,9 +109,6 @@ export default function detalhesChamado() {
 
                 <Text>Histórico</Text>
                 <TextInput></TextInput>
-                <TextInput></TextInput>
-                <TextInput></TextInput>
-
 
             </View>
 
