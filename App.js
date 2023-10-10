@@ -19,17 +19,20 @@ export default function App() {
   var user = useAuthentication();
 
   const [isUserLoggedIn, setUserLoggedIn] = useState(false);
+  const [isAnalista, setAnalista] = useState(false);
+  const [isSolicitante, setSolicitante] = useState(false);
 
-  const updateUserLoggedIn = (loggedIn) => {
+  const updateUserLoggedIn = (loggedIn, permissao) => {
     setUserLoggedIn(loggedIn);
-  };
 
-  useEffect(() => {
-    const emailUsuario = AsyncStorage.getItem("email");
-    if (emailUsuario != null) {
-      updateUserLoggedIn(true);
+    if(permissao == "analista") {
+      setAnalista(true);
+      setSolicitante(false);
+    } else if (permissao == "solicitante") {
+      setSolicitante(true);
+      setAnalista(false);
     }
-  }, []);
+  };
 
   function Logout({ updateUserLoggedIn, navigation }) {
     const auth = getAuth();
@@ -72,7 +75,7 @@ export default function App() {
               {(props) => <AbrirChamado {...props} user={user} />}
             </Drawer.Screen>
           ) : null}
-          {isUserLoggedIn ? (
+          {isAnalista && isUserLoggedIn ? (
             <Drawer.Screen
               name="Triagem"
               component={Triagem}

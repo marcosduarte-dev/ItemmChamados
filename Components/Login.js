@@ -33,8 +33,11 @@ export default function Login({ navigation, updateUserLoggedIn }) {
       const docId = doc.id;
       jsonData[docId] = docData;
     });
-    await AsyncStorage.setItem("departamento", jsonData[Object.keys(jsonData)[0]].departamento);
-    await AsyncStorage.setItem("permissao", jsonData[Object.keys(jsonData)[0]].permissao);
+    const chave = Object.keys(jsonData)[0]
+    const departamento = jsonData[chave].departamento !== undefined ? jsonData[chave].departamento : "";
+    const permissao = jsonData[chave].permissao !== undefined ? jsonData[chave].permissao : "";
+    await AsyncStorage.setItem("departamento", departamento);
+    await AsyncStorage.setItem("permissao", permissao);
   };
 
   async function signIn() {
@@ -50,8 +53,12 @@ export default function Login({ navigation, updateUserLoggedIn }) {
       await signInWithEmailAndPassword(auth, value.email, value.password);
       await AsyncStorage.setItem("email", value.email);
       await fetchData();
-      updateUserLoggedIn(true);
-      navigation.navigate("Triagem");
+      const permissao = await AsyncStorage.getItem("permissao");
+      updateUserLoggedIn(true, permissao);
+      if (permissao == "analista")
+        navigation.navigate("Triagem");
+      else
+        navigation.navigate("MeusChamados");
     } catch (error) {
       setValue({
         ...value,
