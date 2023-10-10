@@ -62,7 +62,7 @@ export default function MeusChamados({ navigation, user }) {
               titulo,
             } = data[idKey];
             const isSelected = idKey === selectedId;
-            if (status === "Aberto") {
+            
               return (
                 <View key={idKey} style={styles.view}>
                   <View style={styles.viewID}>
@@ -85,9 +85,6 @@ export default function MeusChamados({ navigation, user }) {
                   </Text>
                 </View>
               );
-            }
-
-            return null;
           })}
         </View>
       </ScrollView>

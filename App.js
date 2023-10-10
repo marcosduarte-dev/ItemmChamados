@@ -37,10 +37,11 @@ export default function App() {
   function Logout({ updateUserLoggedIn, navigation }) {
     const auth = getAuth();
   
-    const logout = () => {
+    const logout = async () => {
       signOut(auth);
       updateUserLoggedIn(false);
       navigation.goBack();
+      await AsyncStorage.clear();
     };
   
     useEffect(() => {

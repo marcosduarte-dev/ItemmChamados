@@ -6,7 +6,13 @@ import * as yup from "yup";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
 
 const auth = getAuth();
 
@@ -33,9 +39,13 @@ export default function Login({ navigation, updateUserLoggedIn }) {
       const docId = doc.id;
       jsonData[docId] = docData;
     });
-    const chave = Object.keys(jsonData)[0]
-    const departamento = jsonData[chave].departamento !== undefined ? jsonData[chave].departamento : "";
-    const permissao = jsonData[chave].permissao !== undefined ? jsonData[chave].permissao : "";
+    const chave = Object.keys(jsonData)[0];
+    const departamento =
+      jsonData[chave].departamento !== undefined
+        ? jsonData[chave].departamento
+        : "";
+    const permissao =
+      jsonData[chave].permissao !== undefined ? jsonData[chave].permissao : "";
     await AsyncStorage.setItem("departamento", departamento);
     await AsyncStorage.setItem("permissao", permissao);
   };
@@ -55,10 +65,8 @@ export default function Login({ navigation, updateUserLoggedIn }) {
       await fetchData();
       const permissao = await AsyncStorage.getItem("permissao");
       updateUserLoggedIn(true, permissao);
-      if (permissao == "analista")
-        navigation.navigate("Triagem");
-      else
-        navigation.navigate("MeusChamados");
+      if (permissao == "analista") navigation.navigate("Triagem");
+      else navigation.navigate("MeusChamados");
     } catch (error) {
       setValue({
         ...value,
@@ -114,11 +122,11 @@ export default function Login({ navigation, updateUserLoggedIn }) {
         {/* Warning message for incorrect login */}
         {value.error != "" ? (
           <View style={styles.warning_message}>
-            <Text style={styles.warning_text}>Usuário ou senha incorretos.</Text>
+            <Text style={styles.warning_text}>
+              Usuário ou senha incorretos.
+            </Text>
           </View>
-        ) : 
-          null
-        }
+        ) : null}
       </View>
     </View>
   );
