@@ -1,4 +1,11 @@
-import { StyleSheet, View, ScrollView, Text as RnText } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text as RnText,
+  Button,
+  Pressable,
+} from "react-native";
 import NavBar from "./NavBar";
 import { PieChart } from "react-native-svg-charts";
 import { Text as SvgText } from "react-native-svg";
@@ -8,47 +15,31 @@ import {
   collection,
   getDocs,
   getFirestore,
-  or,
   query,
-  where,
 } from "firebase/firestore";
+import XLSX from "xlsx";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 export default function Dashboard({ navigation, user }) {
+  const [json, setJson] = useState([]);
   const [data, setData] = useState([
     {
       key: 1,
-      amount: 50,
+      amount: 0,
       svg: { fill: "#ED7D31" },
     },
     {
       key: 2,
-      amount: 50,
+      amount: 0,
       svg: { fill: "#A5A5A5" },
     },
     {
       key: 3,
-      amount: 40,
+      amount: 0,
       svg: { fill: "#4472C4" },
     },
   ]);
-
-  /*var data = [
-    {
-      key: 1,
-      amount: 50,
-      svg: { fill: "#ED7D31" },
-    },
-    {
-      key: 2,
-      amount: 50,
-      svg: { fill: "#A5A5A5" },
-    },
-    {
-      key: 3,
-      amount: 40,
-      svg: { fill: "#4472C4" },
-    },
-  ];*/
 
   useEffect(() => {
     fetchData();
@@ -71,8 +62,10 @@ export default function Dashboard({ navigation, user }) {
     var intProrrogados = 0;
 
     querySnapshot.forEach((doc) => {
+      const docData = doc.data();
+      const docId = doc.id;
+      jsonData[docId] = docData;
       var status = doc.data().status;
-      console.log(status);
       if (status == "Aberto") {
         intNaoAtendidos++;
       }
@@ -105,8 +98,31 @@ export default function Dashboard({ navigation, user }) {
       }
       return item;
     });
+    setJson(jsonData);
+    setData(newData);
+  };
 
-    setData(newData); // Atualiza o array data com os novos valores
+  const gerarExcel = async () => {
+    console.log("********* Gerando excel ***********");
+    const jsonArray = Object.values(json)
+    var ws = XLSX.utils.json_to_sheet(jsonArray);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Chamados");
+    const wbout = XLSX.write(wb, {
+      type: "base64",
+      bookType: "xlsx",
+    });
+    const uri = FileSystem.cacheDirectory + "chamados.xlsx";
+    await FileSystem.writeAsStringAsync(uri, wbout, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    await Sharing.shareAsync(uri, {
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      dialogTitle: "Relatorio Chamados",
+      UTI: "com.microsoft.excel.xlsx",
+    });
   };
 
   const Labels = ({ slices, height, width }) => {
@@ -137,7 +153,7 @@ export default function Dashboard({ navigation, user }) {
         <ScrollView style={{ padding: 15 }}>
           <RnText style={styles.titulo}>Dashboard</RnText>
           <PieChart
-            style={{ height: 350, width: 350 }}
+            style={{ height: 350, width: 350, marginTop: 15 }}
             valueAccessor={({ item }) => item.amount}
             data={data}
             spacing={0}
@@ -145,24 +161,33 @@ export default function Dashboard({ navigation, user }) {
           >
             <Labels />
           </PieChart>
-
-          <View style={styles.legendaFlex}>
-            <View
-              style={[styles.legenda, { backgroundColor: "#4472C4" }]}
-            ></View>
-            <RnText style={styles.txtLegenda}>Atendidos</RnText>
-          </View>
-          <View style={styles.legendaFlex}>
-            <View
-              style={[styles.legenda, { backgroundColor: "#ED7D31" }]}
-            ></View>
-            <RnText style={styles.txtLegenda}>Não Atendidos</RnText>
-          </View>
-          <View style={styles.legendaFlex}>
-            <View
-              style={[styles.legenda, { backgroundColor: "#A5A5A5" }]}
-            ></View>
-            <RnText style={styles.txtLegenda}>Prorrogados</RnText>
+          <View style={{marginTop: 15}}>
+            <View style={styles.legendaFlex}>
+              <View
+                style={[styles.legenda, { backgroundColor: "#4472C4" }]}
+              ></View>
+              <RnText style={styles.txtLegenda}>Atendidos</RnText>
+            </View>
+            <View style={styles.legendaFlex}>
+              <View
+                style={[styles.legenda, { backgroundColor: "#ED7D31" }]}
+              ></View>
+              <RnText style={styles.txtLegenda}>Não Atendidos</RnText>
+            </View>
+            <View style={styles.legendaFlex}>
+              <View
+                style={[styles.legenda, { backgroundColor: "#A5A5A5" }]}
+              ></View>
+              <RnText style={styles.txtLegenda}>Prorrogados</RnText>
+            </View>
+            <View style={{marginTop: 15}}>
+              <Pressable
+              style={styles.button_cadastrar}
+              onPress={() => gerarExcel()}
+            >
+              <RnText style={styles.btn_text_imagem}>Gerar Relatorio</RnText>
+            </Pressable>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -203,5 +228,23 @@ const styles = StyleSheet.create({
   txtLegenda: {
     marginLeft: 12,
     fontSize: 16,
+  },
+  button_cadastrar: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#95CB63",
+    width: 350,
+    marginTop: 15,
+  },
+  btn_text_imagem: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
   },
 });
