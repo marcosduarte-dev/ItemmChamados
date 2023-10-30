@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   Text as RnText,
-  Button,
   Pressable,
 } from "react-native";
 import NavBar from "./NavBar";
@@ -11,12 +10,7 @@ import { PieChart } from "react-native-svg-charts";
 import { Text as SvgText } from "react-native-svg";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  collection,
-  getDocs,
-  getFirestore,
-  query,
-} from "firebase/firestore";
+import { collection, getDocs, getFirestore, query } from "firebase/firestore";
 import XLSX from "xlsx";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -104,7 +98,7 @@ export default function Dashboard({ navigation, user }) {
 
   const gerarExcel = async () => {
     console.log("********* Gerando excel ***********");
-    const jsonArray = Object.values(json)
+    const jsonArray = Object.values(json);
     var ws = XLSX.utils.json_to_sheet(jsonArray);
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Chamados");
@@ -161,7 +155,7 @@ export default function Dashboard({ navigation, user }) {
           >
             <Labels />
           </PieChart>
-          <View style={{marginTop: 15}}>
+          <View style={{ marginTop: 15 }}>
             <View style={styles.legendaFlex}>
               <View
                 style={[styles.legenda, { backgroundColor: "#4472C4" }]}
@@ -180,13 +174,13 @@ export default function Dashboard({ navigation, user }) {
               ></View>
               <RnText style={styles.txtLegenda}>Prorrogados</RnText>
             </View>
-            <View style={{marginTop: 15}}>
+            <View style={{ marginTop: 15 }}>
               <Pressable
-              style={styles.button_cadastrar}
-              onPress={() => gerarExcel()}
-            >
-              <RnText style={styles.btn_text_imagem}>Gerar Relatorio</RnText>
-            </Pressable>
+                style={styles.button_cadastrar}
+                onPress={() => gerarExcel()}
+              >
+                <RnText style={styles.btn_text_imagem}>Gerar Relatorio</RnText>
+              </Pressable>
             </View>
           </View>
         </ScrollView>
