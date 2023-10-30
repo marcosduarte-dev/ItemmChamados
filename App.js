@@ -6,6 +6,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from "@react-navigation/native";
 import Triagem from "./Components/Triagem";
 import Login from "./Components/Login";
+import DetalhesChamado from "./Components/DetalhesChamado";
 
 const Drawer = createDrawerNavigator();
 
@@ -36,6 +37,8 @@ function DrawerNavigator() {
       <Drawer.Screen name="Abertura" component={AbrirChamado} />
       <Drawer.Screen name="Triagem" component={Triagem} />
       <Drawer.Screen name="Login" component={Login} />
+      {/* remove line below */}
+      <Drawer.Screen name="Detalhes C" component={DetalhesChamado} />
     </Drawer.Navigator>
   );
 }

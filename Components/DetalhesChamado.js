@@ -5,10 +5,13 @@ import {
     TextInput,
     Pressable
 } from "react-native";
+import { useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
 import NavBar from "./NavBar";
 
-export default function detalhesChamado() {
+//navifation added to test page - remove before implementation
+
+export default function DetalhesChamado({ navigation }) {
     // INPUTS PADRONIZADOS
     const TextField = ({ error, label, ...inputProps }) => (
         <View style={styles.container}>
@@ -30,6 +33,7 @@ export default function detalhesChamado() {
     ];
     const [dado, setDado] = useState(null);
 
+
     return (
         <View style={styles.bg_itemm}>
             <NavBar navigation={navigation} />
@@ -44,66 +48,26 @@ export default function detalhesChamado() {
 
             {/* Campos de detalhes do chamado */}
             <View>
-                <TextField
-                    label={"Titulo"}
-                    error={errors.titulo}
-                    placeholderTextColor="grey"
-                />
 
-                <TextField
-                    label={"Data abertura"}
-                    error={errors.data}
-                    placeholderTextColor="grey"
-                />
-                <TextField
-                    label={"Status"}
-                    error={errors.status}
-                    placeholderTextColor="grey"
-                />
-                <TextField
-                    label={"Soicitante"}
-                    error={errors.solicitante}
-                    placeholderTextColor="grey"
-                />
+                <Text>Titulo</Text>
+                <TextInput></TextInput>
+
+                <Text>Data de abertura</Text>
+                <TextInput></TextInput>
+
+                <Text>Status</Text>
+                <TextInput></TextInput>
 
                 <Text>Analista</Text>
-                <Dropdown
-                    style={styles.dropdown}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    data={analistas}
-                    search
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder="Analista responsavel"
-                    searchPlaceholder="Search..."
-                    value={dado}
-                    onChange={(analistas) => {
-                        setDado(analistas.value);
-                        setValue("analista", analistas.value);
-                    }}
-                />
+                <TextInput></TextInput>
 
-                <TextField
-                    label={"Descrição"}
-                    error={errors.descricao}
-                    placeholder={"Descreva o seu problema"}
-                    placeholderTextColor="grey"
+                <Text>Descrição</Text>
+                <TextInput></TextInput>
 
-                />
-
-                <TextField
-                    label={"Titulo"}
-                    error={errors.titulo}
-                    placeholder={"Digite o titulo do chamado"}
-                    placeholderTextColor="grey"
-                    onChangeText={(text) => setValue("titulo", text)}
-                />
                 <Pressable
                     style={styles.button_cadastrar}
-                    onPress={handleSubmit(onSubmit)}>
+                // onPress={handleSubmit(onSubmit)}
+                >
                     <Text>Enviar mensagem</Text>
                 </Pressable>
 
