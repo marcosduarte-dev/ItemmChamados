@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import NavBar from "./NavBar";
@@ -44,6 +44,12 @@ export default function MeusChamados({ navigation, user }) {
     setData(jsonData);
   };
 
+  const abrirDetalhes = (chamado) => {
+    console.log("abrirDetalhes");
+    console.log(chamado);
+    navigation.navigate("DetalhesChamado")
+  }
+
   return (
     <View style={styles.bg_itemm}>
       <ScrollView>
@@ -62,7 +68,7 @@ export default function MeusChamados({ navigation, user }) {
             const isSelected = idKey === selectedId;
             
               return (
-                <View key={idKey} style={styles.view}>
+                <Pressable onPress={() => abrirDetalhes(data[idKey])} key={idKey} style={styles.view}>
                   <View style={styles.viewID}>
                     <Text style={styles.id}>{ID}</Text>
                   </View>
@@ -81,7 +87,7 @@ export default function MeusChamados({ navigation, user }) {
                   <Text style={styles.mt5}>
                     <Text style={styles.label}>Status:</Text> {status}
                   </Text>
-                </View>
+                </Pressable>
               );
           })}
         </View>

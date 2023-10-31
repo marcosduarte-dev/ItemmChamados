@@ -63,6 +63,7 @@ export default function App() {
             },
             headerShown: false,
             headerStyle: { backgroundColor: "black" },
+            drawerActiveBackgroundColor: "white",
           }}
         >
           {isUserLoggedIn ? (
@@ -75,6 +76,7 @@ export default function App() {
               name="Triagem"
               component={Triagem}
               options={{ title: "Triagem" }}
+
             />
           ) : null}
           {isUserLoggedIn ? (
@@ -102,6 +104,14 @@ export default function App() {
             )}
           </Drawer.Screen>
         )}
+        {isUserLoggedIn ? (
+            <Drawer.Screen
+              name="DetalhesChamado"
+              options={{ title: " " }}
+            >
+              {(props) => <DetalhesChamado {...props} />}
+            </Drawer.Screen>
+          ) : null}
         </Drawer.Navigator>
       </NavigationContainer>
       <StatusBar style="auto" />

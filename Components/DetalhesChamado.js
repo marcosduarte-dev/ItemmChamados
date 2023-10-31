@@ -11,7 +11,7 @@ import NavBar from "./NavBar";
 
 //navifation added to test page - remove before implementation
 
-export default function DetalhesChamado({ navigation }) {
+export default function DetalhesChamado({ navigation, chamado }) {
     // INPUTS PADRONIZADOS
     const TextField = ({ error, label, ...inputProps }) => (
         <View style={styles.container}>
