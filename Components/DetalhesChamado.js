@@ -16,8 +16,6 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-//navifation added to test page - remove before implementation
-
 export default function DetalhesChamado({ navigation, route }) {
   var { chamado, idKey, updateDetalhes } = route.params;
   const [listaAnalista, setListaAnalista] = useState([]);
