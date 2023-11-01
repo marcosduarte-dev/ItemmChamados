@@ -30,8 +30,10 @@ export default function MeusChamados({ navigation, user }) {
   const fetchData = async () => {
     const ref = query(
       collection(db, "chamados"),
-      or(where("solicitante", "==", user.user.email),
-      where("analista", "==", user.user.email))
+      or(
+        where("solicitante", "==", user.user.email),
+        where("analista", "==", user.user.email)
+      )
     );
     const querySnapshot = await getDocs(ref);
     const jsonData = {};
@@ -44,11 +46,10 @@ export default function MeusChamados({ navigation, user }) {
     setData(jsonData);
   };
 
-  const abrirDetalhes = (chamado) => {
-    console.log("abrirDetalhes");
+  const abrirDetalhes = (chamado, idKey) => {
     console.log(chamado);
-    navigation.navigate("DetalhesChamado")
-  }
+    navigation.navigate("DetalhesChamado", { chamado: chamado, idKey: idKey });
+  };
 
   return (
     <View style={styles.bg_itemm}>
@@ -66,29 +67,32 @@ export default function MeusChamados({ navigation, user }) {
               titulo,
             } = data[idKey];
             const isSelected = idKey === selectedId;
-            
-              return (
-                <Pressable onPress={() => abrirDetalhes(data[idKey])} key={idKey} style={styles.view}>
-                  <View style={styles.viewID}>
-                    <Text style={styles.id}>{ID}</Text>
-                  </View>
-                  <View style={styles.line} />
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Titulo:</Text> {titulo}
-                  </Text>
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Data da Abertura:</Text>{" "}
-                    {dataAbertura}
-                  </Text>
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Departamento:</Text>{" "}
-                    {departamento}
-                  </Text>
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Status:</Text> {status}
-                  </Text>
-                </Pressable>
-              );
+
+            return (
+              <Pressable
+                onPress={() => abrirDetalhes(data[idKey], idKey)}
+                key={idKey}
+                style={styles.view}
+              >
+                <View style={styles.viewID}>
+                  <Text style={styles.id}>{ID}</Text>
+                </View>
+                <View style={styles.line} />
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Titulo:</Text> {titulo}
+                </Text>
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Data da Abertura:</Text>{" "}
+                  {dataAbertura}
+                </Text>
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Departamento:</Text> {departamento}
+                </Text>
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Status:</Text> {status}
+                </Text>
+              </Pressable>
+            );
           })}
         </View>
       </ScrollView>
