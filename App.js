@@ -13,6 +13,7 @@ import MeusChamados from "./Components/Meus Chamados";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, signOut } from "firebase/auth";
 import DetalhesChamado from "./Components/DetalhesChamado";
+import Dashboard from "./Components/Dashboard";
 
 const Drawer = createDrawerNavigator();
 
@@ -71,6 +72,13 @@ export default function App() {
             drawerActiveBackgroundColor: "white",
           }}
         >
+          {isAnalista && isUserLoggedIn ? (
+            <Drawer.Screen
+              name="Dashboard"
+              component={Dashboard}
+              options={{ title: "Dashboard" }}
+            />
+          ) : null}
           {isUserLoggedIn ? (
             <Drawer.Screen name="Abertura" options={{ title: "Abertura" }}>
               {(props) => <AbrirChamado {...props} user={user} />}
