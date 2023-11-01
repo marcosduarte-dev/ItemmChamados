@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import MeusChamados from "./Components/Meus Chamados";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, signOut } from "firebase/auth";
+import DetalhesChamado from "./Components/DetalhesChamado";
 
 const Drawer = createDrawerNavigator();
 
@@ -21,11 +22,12 @@ export default function App() {
   const [isUserLoggedIn, setUserLoggedIn] = useState(false);
   const [isAnalista, setAnalista] = useState(false);
   const [isSolicitante, setSolicitante] = useState(false);
+  const [abrirDetalhes, setAbrirDetalhes] = useState(false);
 
   const updateUserLoggedIn = (loggedIn, permissao) => {
     setUserLoggedIn(loggedIn);
 
-    if(permissao == "analista") {
+    if (permissao == "analista") {
       setAnalista(true);
       setSolicitante(false);
     } else if (permissao == "solicitante") {
@@ -34,20 +36,24 @@ export default function App() {
     }
   };
 
+  const updateDetalhes = async (bool) => {
+    setAbrirDetalhes(bool);
+  };
+
   function Logout({ updateUserLoggedIn, navigation }) {
     const auth = getAuth();
-  
+
     const logout = async () => {
       signOut(auth);
       updateUserLoggedIn(false);
       navigation.goBack();
       await AsyncStorage.clear();
     };
-  
+
     useEffect(() => {
       logout();
     }, []);
-  
+
     return null;
   }
 
@@ -62,6 +68,7 @@ export default function App() {
             },
             headerShown: false,
             headerStyle: { backgroundColor: "black" },
+            drawerActiveBackgroundColor: "white",
           }}
         >
           {isUserLoggedIn ? (
@@ -70,37 +77,48 @@ export default function App() {
             </Drawer.Screen>
           ) : null}
           {isAnalista && isUserLoggedIn ? (
-            <Drawer.Screen
-              name="Triagem"
-              component={Triagem}
-              options={{ title: "Triagem" }}
-            />
+            <Drawer.Screen name="Triagem" options={{ title: "Triagem" }}>
+              {(props) => (
+                <Triagem {...props} updateDetalhes={updateDetalhes} />
+              )}
+            </Drawer.Screen>
           ) : null}
           {isUserLoggedIn ? (
             <Drawer.Screen
               name="MeusChamados"
               options={{ title: "Meus Chamados" }}
             >
-              {(props) => <MeusChamados {...props} user={user} />}
+              {(props) => (
+                <MeusChamados
+                  {...props}
+                  updateDetalhes={updateDetalhes}
+                  user={user}
+                />
+              )}
             </Drawer.Screen>
           ) : null}
 
           {isUserLoggedIn ? (
-          <Drawer.Screen name="Logout">
-            {(props) => (
-              <Logout
-                {...props}
-                updateUserLoggedIn={updateUserLoggedIn}
-              />
-            )}
-          </Drawer.Screen>
-        ) : (
-          <Drawer.Screen name="Login" options={{ title: "Login" }}>
-            {(props) => (
-              <Login {...props} updateUserLoggedIn={updateUserLoggedIn} />
-            )}
-          </Drawer.Screen>
-        )}
+            <Drawer.Screen name="Logout">
+              {(props) => (
+                <Logout {...props} updateUserLoggedIn={updateUserLoggedIn} />
+              )}
+            </Drawer.Screen>
+          ) : (
+            <Drawer.Screen name="Login" options={{ title: "Login" }}>
+              {(props) => (
+                <Login {...props} updateUserLoggedIn={updateUserLoggedIn} />
+              )}
+            </Drawer.Screen>
+          )}
+          {isUserLoggedIn && abrirDetalhes ? (
+            <Drawer.Screen
+              name="DetalhesChamado"
+              options={{ title: " ", unmountOnBlur: true }}
+            >
+              {(props) => <DetalhesChamado {...props} />}
+            </Drawer.Screen>
+          ) : null}
         </Drawer.Navigator>
       </NavigationContainer>
       <StatusBar style="auto" />
