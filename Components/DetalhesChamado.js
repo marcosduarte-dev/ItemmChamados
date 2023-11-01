@@ -26,6 +26,8 @@ export default function DetalhesChamado({ navigation, route }) {
   const [permissaoAnalista, setPermissaoAnalista] = useState(false);
   const db = getFirestore();
 
+  var email = "";
+
   // DATA
   const dataAtual = new Date();
   const dataFormatada = `${dataAtual.getDate()}/${
@@ -58,6 +60,7 @@ export default function DetalhesChamado({ navigation, route }) {
     const querySnapshot = await getDocs(ref);
     const analistas = [];
     const permissao = await AsyncStorage.getItem("permissao");
+    email = await AsyncStorage.getItem("email");
 
     if (permissao == "analista") {
       setPermissaoAnalista(true);
@@ -86,6 +89,7 @@ export default function DetalhesChamado({ navigation, route }) {
       mensagens.push({
         mensagem: docData.mensagem,
         dataMensagem: docData.dataMensagem,
+        enviadoPor: docData.enviadoPor,
       });
     });
     setListaMensagens(mensagens);
@@ -134,6 +138,7 @@ export default function DetalhesChamado({ navigation, route }) {
       idChamado: chamado.ID,
       mensagem: mensagem,
       dataMensagem: `${dataFormatada} ${tempoFormatado}`,
+      enviadoPor: email,
     }).then(() => {
       console.log("Mensagem enviada com sucesso!");
     });
@@ -264,7 +269,9 @@ export default function DetalhesChamado({ navigation, route }) {
                 <Text style={{ fontWeight: "bold" }}>Mensagem: </Text>
                 <Text>{item.mensagem} </Text>
                 <Text style={{ fontWeight: "bold" }}>Data: </Text>
-                <Text>{item.dataMensagem}</Text>
+                <Text>{item.dataMensagem} </Text>
+                <Text style={{ fontWeight: "bold" }}>Enviado por: </Text>
+                <Text>{item.enviadoPor}</Text>
               </View>
             ))}
           </>
