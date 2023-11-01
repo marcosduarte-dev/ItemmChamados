@@ -246,13 +246,13 @@ export default function DetalhesChamado({ navigation, route }) {
           <Text style={styles.label}>Histórico</Text>
           <>
             {listaMensagens.map((item, index) => (
-              <TextInput
-                key={index}
-                style={[styles.input, { padding: 8 }]}
-                multiline
-                editable={false}
-                value={`${item.mensagem} - enviado em ${item.dataMensagem}`}
-              />
+              <View key={index} style={{ flexDirection: "row" }}>
+                <Text style={{ fontWeight: "bold" }}>Mensagem: </Text>
+                <Text>{item.mensagem}</Text>
+                <Text> - </Text>
+                <Text style={{ fontWeight: "bold" }}>Data:</Text>
+                <Text>{item.dataMensagem}</Text>
+              </View>
             ))}
           </>
         </View>
