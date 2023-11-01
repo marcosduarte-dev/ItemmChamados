@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 
-export default function MeusChamados({ navigation, user }) {
+export default function MeusChamados({ navigation, user, updateDetalhes }) {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const db = getFirestore();
@@ -46,9 +46,13 @@ export default function MeusChamados({ navigation, user }) {
     setData(jsonData);
   };
 
-  const abrirDetalhes = (chamado, idKey) => {
-    console.log(chamado);
-    navigation.navigate("DetalhesChamado", { chamado: chamado, idKey: idKey });
+  const abrirDetalhes = async (chamado, idKey) => {
+    await updateDetalhes(true);
+    navigation.navigate("DetalhesChamado", {
+      chamado: chamado,
+      idKey: idKey,
+      updateDetalhes: updateDetalhes,
+    });
   };
 
   return (

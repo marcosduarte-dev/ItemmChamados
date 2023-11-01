@@ -19,7 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 //navifation added to test page - remove before implementation
 
 export default function DetalhesChamado({ navigation, route }) {
-  var { chamado, idKey } = route.params;
+  var { chamado, idKey, updateDetalhes } = route.params;
   const [listaAnalista, setListaAnalista] = useState([]);
   const [listaMensagens, setListaMensagens] = useState([]);
   const [mensagem, setMensagem] = useState("");
@@ -94,6 +94,9 @@ export default function DetalhesChamado({ navigation, route }) {
   useEffect(() => {
     fetchData();
     fetchMensagens();
+    return () => {
+      updateDetalhes(false);
+    };
   }, []);
 
   useFocusEffect(
