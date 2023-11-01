@@ -74,7 +74,6 @@ export default function DetalhesChamado({ navigation, route }) {
   };
 
   const fetchMensagens = async () => {
-    console.log("FETCH MENSAGENS");
     const ref = query(
       collection(db, "mensagens"),
       where("idChamado", "==", chamado.ID)
@@ -101,7 +100,6 @@ export default function DetalhesChamado({ navigation, route }) {
     useCallback(() => {
       fetchData();
       fetchMensagens();
-      console.log(chamado);
     }, [chamado])
   );
 
@@ -119,7 +117,6 @@ export default function DetalhesChamado({ navigation, route }) {
   );
 
   const atualizarChamado = () => {
-    console.log(chamado);
     updateDoc(doc(db, "chamados", idKey), chamado)
       .then(() => {
         console.log("Dado salvo com sucesso!");
