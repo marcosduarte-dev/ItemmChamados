@@ -51,7 +51,7 @@ export default function MeusChamados({ navigation, user, updateDetalhes }) {
     navigation.navigate("DetalhesChamado", {
       chamado: chamado,
       idKey: idKey,
-      updateDetalhes: updateDetalhes,
+      updateDetalhes: () => updateDetalhes(),
     });
   };
 

@@ -77,11 +77,11 @@ export default function App() {
             </Drawer.Screen>
           ) : null}
           {isAnalista && isUserLoggedIn ? (
-            <Drawer.Screen
-              name="Triagem"
-              component={Triagem}
-              options={{ title: "Triagem" }}
-            />
+            <Drawer.Screen name="Triagem" options={{ title: "Triagem" }}>
+              {(props) => (
+                <Triagem {...props} updateDetalhes={updateDetalhes} />
+              )}
+            </Drawer.Screen>
           ) : null}
           {isUserLoggedIn ? (
             <Drawer.Screen
