@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import NavBar from "./NavBar";
@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 
-export default function MeusChamados({ navigation, user }) {
+export default function MeusChamados({ navigation, user, updateDetalhes }) {
   const [data, setData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const db = getFirestore();
@@ -30,8 +30,10 @@ export default function MeusChamados({ navigation, user }) {
   const fetchData = async () => {
     const ref = query(
       collection(db, "chamados"),
-      or(where("solicitante", "==", user.user.email),
-      where("analista", "==", user.user.email))
+      or(
+        where("solicitante", "==", user.user.email),
+        where("analista", "==", user.user.email)
+      )
     );
     const querySnapshot = await getDocs(ref);
     const jsonData = {};
@@ -42,6 +44,15 @@ export default function MeusChamados({ navigation, user }) {
       jsonData[docId] = docData;
     });
     setData(jsonData);
+  };
+
+  const abrirDetalhes = async (chamado, idKey) => {
+    await updateDetalhes(true);
+    navigation.navigate("DetalhesChamado", {
+      chamado: chamado,
+      idKey: idKey,
+      updateDetalhes: () => updateDetalhes(),
+    });
   };
 
   return (
@@ -60,29 +71,32 @@ export default function MeusChamados({ navigation, user }) {
               titulo,
             } = data[idKey];
             const isSelected = idKey === selectedId;
-            
-              return (
-                <View key={idKey} style={styles.view}>
-                  <View style={styles.viewID}>
-                    <Text style={styles.id}>{ID}</Text>
-                  </View>
-                  <View style={styles.line} />
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Titulo:</Text> {titulo}
-                  </Text>
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Data da Abertura:</Text>{" "}
-                    {dataAbertura}
-                  </Text>
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Departamento:</Text>{" "}
-                    {departamento}
-                  </Text>
-                  <Text style={styles.mt5}>
-                    <Text style={styles.label}>Status:</Text> {status}
-                  </Text>
+
+            return (
+              <Pressable
+                onPress={() => abrirDetalhes(data[idKey], idKey)}
+                key={idKey}
+                style={styles.view}
+              >
+                <View style={styles.viewID}>
+                  <Text style={styles.id}>{ID}</Text>
                 </View>
-              );
+                <View style={styles.line} />
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Titulo:</Text> {titulo}
+                </Text>
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Data da Abertura:</Text>{" "}
+                  {dataAbertura}
+                </Text>
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Departamento:</Text> {departamento}
+                </Text>
+                <Text style={styles.mt5}>
+                  <Text style={styles.label}>Status:</Text> {status}
+                </Text>
+              </Pressable>
+            );
           })}
         </View>
       </ScrollView>
