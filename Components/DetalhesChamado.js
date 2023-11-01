@@ -14,6 +14,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //navifation added to test page - remove before implementation
 
@@ -22,6 +23,7 @@ export default function DetalhesChamado({ navigation, route }) {
   const [listaAnalista, setListaAnalista] = useState([]);
   const [listaMensagens, setListaMensagens] = useState([]);
   const [mensagem, setMensagem] = useState("");
+  const [permissaoAnalista, setPermissaoAnalista] = useState(false);
   const db = getFirestore();
 
   // DATA
@@ -55,6 +57,13 @@ export default function DetalhesChamado({ navigation, route }) {
     );
     const querySnapshot = await getDocs(ref);
     const analistas = [];
+    const permissao = await AsyncStorage.getItem("permissao");
+
+    if (permissao == "analista") {
+      setPermissaoAnalista(true);
+    } else {
+      setPermissaoAnalista(false);
+    }
 
     querySnapshot.forEach((doc) => {
       const docData = doc.data();
@@ -170,6 +179,7 @@ export default function DetalhesChamado({ navigation, route }) {
           onChange={(item) => {
             chamado.status = item.value;
           }}
+          disable={!permissaoAnalista}
         />
         <TextField
           label={"Solicitante"}
@@ -191,6 +201,7 @@ export default function DetalhesChamado({ navigation, route }) {
           onChange={(item) => {
             chamado.departamento = item.value;
           }}
+          disable={!permissaoAnalista}
         />
         <Text style={styles.label}>Analista</Text>
         <Dropdown
@@ -206,6 +217,7 @@ export default function DetalhesChamado({ navigation, route }) {
           onChange={(item) => {
             chamado.analista = item.value;
           }}
+          disable={!permissaoAnalista}
         />
         <View style={styles.container}>
           <Text style={styles.label}>Descrição</Text>
@@ -217,12 +229,14 @@ export default function DetalhesChamado({ navigation, route }) {
           />
         </View>
 
-        <Pressable
-          style={styles.button_cadastrar}
-          onPress={() => atualizarChamado()}
-        >
-          <Text style={styles.btn_text_imagem}>Salvar</Text>
-        </Pressable>
+        {permissaoAnalista ? (
+          <Pressable
+            style={styles.button_cadastrar}
+            onPress={() => atualizarChamado()}
+          >
+            <Text style={styles.btn_text_imagem}>Salvar</Text>
+          </Pressable>
+        ) : null}
 
         <View style={styles.container}>
           <Text style={styles.label}>Mensagens</Text>
@@ -246,11 +260,10 @@ export default function DetalhesChamado({ navigation, route }) {
           <Text style={styles.label}>Histórico</Text>
           <>
             {listaMensagens.map((item, index) => (
-              <View key={index} style={{ flexDirection: "row" }}>
+              <View key={index} style={styles.historico}>
                 <Text style={{ fontWeight: "bold" }}>Mensagem: </Text>
-                <Text>{item.mensagem}</Text>
-                <Text> - </Text>
-                <Text style={{ fontWeight: "bold" }}>Data:</Text>
+                <Text>{item.mensagem} </Text>
+                <Text style={{ fontWeight: "bold" }}>Data: </Text>
                 <Text>{item.dataMensagem}</Text>
               </View>
             ))}
@@ -353,5 +366,14 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+  },
+  historico: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 12,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 12,
   },
 });
