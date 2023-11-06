@@ -12,11 +12,15 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 
 const auth = getAuth();
 
 export default function Login({ navigation, updateUserLoggedIn }) {
-  const [data, setData] = useState([]);
   const [value, setValue] = useState({
     email: "",
     password: "",
@@ -51,15 +55,21 @@ export default function Login({ navigation, updateUserLoggedIn }) {
 
   async function signIn() {
     if (value.email === "" || value.password === "") {
-      setValue({
-        ...value,
-        error: "Email and password are mandatory.",
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Erro",
+        textBody: "Precisa preencher email e senha!",
       });
       return;
     }
 
     try {
       await signInWithEmailAndPassword(auth, value.email, value.password);
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: "Successo",
+        textBody: "Logado com sucesso!",
+      });
       await AsyncStorage.setItem("email", value.email);
       await fetchData();
       const permissao = await AsyncStorage.getItem("permissao");
@@ -67,56 +77,52 @@ export default function Login({ navigation, updateUserLoggedIn }) {
       if (permissao == "analista") navigation.navigate("Triagem");
       else navigation.navigate("MeusChamados");
     } catch (error) {
-      setValue({
-        ...value,
-        error: error.message,
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Erro",
+        textBody: "Erro ao fazer login!",
       });
     }
   }
 
   return (
-    <View style={styles.bg_itemm}>
-      <NavBar navigation={navigation} />
-      <View
-        style={[
-          {
-            padding: 15,
-            marginTop: 15,
-          },
-          styles.bg_white,
-        ]}
-      >
-        <Text style={styles.titulo}>Login</Text>
-        <View style={styles.login_flex}>
-          <Text>Usuário:</Text>
-          <TextInput
-            placeholder="user.name"
-            style={styles.input}
-            value={value.email}
-            onChangeText={(text) => setValue({ ...value, email: text })}
-          />
-          <Text>Senha:</Text>
-          <TextInput
-            secureTextEntry={true}
-            placeholder="******"
-            style={styles.input}
-            value={value.password}
-            onChangeText={(text) => setValue({ ...value, password: text })}
-          />
+    <AlertNotificationRoot>
+      <View style={styles.bg_itemm}>
+        <NavBar navigation={navigation} />
+        <View
+          style={[
+            {
+              padding: 15,
+              marginTop: 15,
+            },
+            styles.bg_white,
+          ]}
+        >
+          <Text style={styles.titulo}>Login</Text>
+          <View style={styles.login_flex}>
+            <Text>Usuário:</Text>
+            <TextInput
+              placeholder="user.name"
+              style={styles.input}
+              value={value.email}
+              onChangeText={(text) => setValue({ ...value, email: text })}
+            />
+            <Text>Senha:</Text>
+            <TextInput
+              secureTextEntry={true}
+              placeholder="******"
+              style={styles.input}
+              value={value.password}
+              onChangeText={(text) => setValue({ ...value, password: text })}
+            />
 
-          <Pressable onPress={signIn} style={styles.btn_acessar}>
-            <Text style={styles.btn_text_imagem}>Acessar</Text>
-          </Pressable>
-        </View>
-        {value.error != "" ? (
-          <View style={styles.warning_message}>
-            <Text style={styles.warning_text}>
-              Usuário ou senha incorretos.
-            </Text>
+            <Pressable onPress={signIn} style={styles.btn_acessar}>
+              <Text style={styles.btn_text_imagem}>Acessar</Text>
+            </Pressable>
           </View>
-        ) : null}
+        </View>
       </View>
-    </View>
+    </AlertNotificationRoot>
   );
 }
 const styles = StyleSheet.create({
