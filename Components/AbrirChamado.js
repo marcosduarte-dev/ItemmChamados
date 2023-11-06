@@ -13,6 +13,11 @@ import * as yup from "yup";
 import NavBar from "./NavBar";
 import { Dropdown } from "react-native-element-dropdown";
 import { collection, getFirestore, addDoc } from "firebase/firestore";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 
 export default function AbrirChamado({ navigation, user }) {
   // DropDown
@@ -74,7 +79,21 @@ export default function AbrirChamado({ navigation, user }) {
       status: "Aberto",
       dataAbertura: `${dataFormatada} ${tempoFormatado}`,
       solicitante: user.user.email,
-    });
+    })
+      .then(() => {
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Sucesso",
+          textBody: "Chamado aberto com sucesso!",
+        });
+      })
+      .catch(() => {
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Erro",
+          textBody: "Erro ao abrir chamado!",
+        });
+      });
   };
 
   // INPUTS PADRONIZADOS
@@ -96,53 +115,55 @@ export default function AbrirChamado({ navigation, user }) {
   }, [register]);
 
   return (
-    <View style={styles.mainContainer}>
-      <NavBar navigation={navigation}></NavBar>
-      <View style={styles.viewPrincipal}>
-        <ScrollView style={{ padding: 15 }}>
-          <Text style={styles.titulo}>Abertura</Text>
-          <Text style={styles.label}>Departamento</Text>
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            data={items}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder="Selecione um departamento"
-            searchPlaceholder="Search..."
-            value={dado}
-            onChange={(item) => {
-              setDado(item.value);
-              setValue("departamento", item.value);
-            }}
-          />
-          <TextField
-            label={"Titulo"}
-            error={errors.titulo}
-            placeholder={"Digite o titulo do chamado"}
-            placeholderTextColor="grey"
-            onChangeText={(text) => setValue("titulo", text)}
-          />
-          <TextField
-            label={"Descrição"}
-            error={errors.descricao}
-            placeholder={"Descreva o seu problema"}
-            placeholderTextColor="grey"
-            onChangeText={(text) => setValue("descricao", text)}
-          />
-          <Pressable
-            style={styles.button_cadastrar}
-            onPress={handleSubmit(onSubmit)}
-          >
-            <Text style={styles.btn_text_imagem}>Abrir Chamado</Text>
-          </Pressable>
-        </ScrollView>
+    <AlertNotificationRoot>
+      <View style={styles.mainContainer}>
+        <NavBar navigation={navigation}></NavBar>
+        <View style={styles.viewPrincipal}>
+          <ScrollView style={{ padding: 15 }}>
+            <Text style={styles.titulo}>Abertura</Text>
+            <Text style={styles.label}>Departamento</Text>
+            <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              data={items}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Selecione um departamento"
+              searchPlaceholder="Search..."
+              value={dado}
+              onChange={(item) => {
+                setDado(item.value);
+                setValue("departamento", item.value);
+              }}
+            />
+            <TextField
+              label={"Titulo"}
+              error={errors.titulo}
+              placeholder={"Digite o titulo do chamado"}
+              placeholderTextColor="grey"
+              onChangeText={(text) => setValue("titulo", text)}
+            />
+            <TextField
+              label={"Descrição"}
+              error={errors.descricao}
+              placeholder={"Descreva o seu problema"}
+              placeholderTextColor="grey"
+              onChangeText={(text) => setValue("descricao", text)}
+            />
+            <Pressable
+              style={styles.button_cadastrar}
+              onPress={handleSubmit(onSubmit)}
+            >
+              <Text style={styles.btn_text_imagem}>Abrir Chamado</Text>
+            </Pressable>
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </AlertNotificationRoot>
   );
 }
 
