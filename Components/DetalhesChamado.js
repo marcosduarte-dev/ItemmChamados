@@ -15,6 +15,11 @@ import {
 } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 
 export default function DetalhesChamado({ navigation, route }) {
   var { chamado, idKey, updateDetalhes } = route.params;
@@ -58,7 +63,6 @@ export default function DetalhesChamado({ navigation, route }) {
     const querySnapshot = await getDocs(ref);
     const analistas = [];
     const permissao = await AsyncStorage.getItem("permissao");
-    email = await AsyncStorage.getItem("email");
 
     if (permissao == "analista") {
       setPermissaoAnalista(true);
@@ -124,158 +128,183 @@ export default function DetalhesChamado({ navigation, route }) {
   const atualizarChamado = () => {
     updateDoc(doc(db, "chamados", idKey), chamado)
       .then(() => {
-        console.log("Dado salvo com sucesso!");
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Sucesso",
+          textBody: `Chamado ${chamado.ID} atualizado com sucesso!`,
+        });
       })
       .catch((error) => {
-        console.log(error);
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Erro",
+          textBody: `Deu um erro ao tentar atualizar o chamado!`,
+        });
       });
   };
 
-  const enviarMensagem = () => {
+  const enviarMensagem = async () => {
+    email = await AsyncStorage.getItem("email");
+
     const docRef = addDoc(collection(db, "mensagens"), {
       idChamado: chamado.ID,
       mensagem: mensagem,
       dataMensagem: `${dataFormatada} ${tempoFormatado}`,
       enviadoPor: email,
-    }).then(() => {
-      console.log("Mensagem enviada com sucesso!");
-    });
+    })
+      .then(() => {
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Sucesso",
+          textBody: `Mensagem enviada com sucesso!`,
+        });
+        fetchMensagens();
+      })
+      .catch(() => {
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Erro",
+          textBody: `Deu um erro ao tentar enviar uma nova mensagem!`,
+        });
+      });
   };
 
   return (
-    <ScrollView style={styles.bg_itemm}>
-      <NavBar navigation={navigation} />
-      <View
-        style={[
-          {
-            padding: 15,
-            marginTop: 15,
-          },
-          styles.bg_white,
-        ]}
-      >
-        <Text style={styles.titulo}>{chamado.ID}</Text>
+    <AlertNotificationRoot>
+      <ScrollView style={styles.bg_itemm}>
+        <NavBar navigation={navigation} />
+        <View
+          style={[
+            {
+              padding: 15,
+              marginTop: 15,
+            },
+            styles.bg_white,
+          ]}
+        >
+          <Text style={styles.titulo}>{chamado.ID}</Text>
 
-        <TextField
-          label={"Titulo"}
-          placeholder={"Titulo do chamado"}
-          placeholderTextColor="grey"
-          value={chamado.titulo}
-        />
-        <TextField
-          label={"Data de Abertura"}
-          placeholder={"Data de Abertura"}
-          placeholderTextColor="grey"
-          value={chamado.dataAbertura}
-        />
-        <Text style={styles.label}>Status</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={status}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="Selecione um status"
-          value={chamado.status}
-          onChange={(item) => {
-            chamado.status = item.value;
-          }}
-          disable={!permissaoAnalista}
-        />
-        <TextField
-          label={"Solicitante"}
-          placeholder={"Não encontrado o solicitante desse chamado"}
-          placeholderTextColor="grey"
-          value={chamado.solicitante}
-        />
-        <Text style={styles.label}>Departamento</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={departamento}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="Selecione um departamento"
-          value={chamado.departamento}
-          onChange={(item) => {
-            chamado.departamento = item.value;
-          }}
-          disable={!permissaoAnalista}
-        />
-        <Text style={styles.label}>Analista</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={listaAnalista}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="Selecione um analista"
-          value={chamado.analista}
-          onChange={(item) => {
-            chamado.analista = item.value;
-          }}
-          disable={!permissaoAnalista}
-        />
-        <View style={styles.container}>
-          <Text style={styles.label}>Descrição</Text>
-          <TextInput
-            style={[styles.input]}
-            multiline
-            editable={false}
-            value={chamado.descricao}
+          <TextField
+            label={"Titulo"}
+            placeholder={"Titulo do chamado"}
+            placeholderTextColor="grey"
+            value={chamado.titulo}
           />
-        </View>
+          <TextField
+            label={"Data de Abertura"}
+            placeholder={"Data de Abertura"}
+            placeholderTextColor="grey"
+            value={chamado.dataAbertura}
+          />
+          <Text style={styles.label}>Status</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={status}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder="Selecione um status"
+            value={chamado.status}
+            onChange={(item) => {
+              chamado.status = item.value;
+            }}
+            disable={!permissaoAnalista}
+          />
+          <TextField
+            label={"Solicitante"}
+            placeholder={"Não encontrado o solicitante desse chamado"}
+            placeholderTextColor="grey"
+            value={chamado.solicitante}
+          />
+          <Text style={styles.label}>Departamento</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={departamento}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder="Selecione um departamento"
+            value={chamado.departamento}
+            onChange={(item) => {
+              chamado.departamento = item.value;
+            }}
+            disable={!permissaoAnalista}
+          />
+          <Text style={styles.label}>Analista</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={listaAnalista}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder="Selecione um analista"
+            value={chamado.analista}
+            onChange={(item) => {
+              chamado.analista = item.value;
+            }}
+            disable={!permissaoAnalista}
+          />
+          <View style={styles.container}>
+            <Text style={styles.label}>Descrição</Text>
+            <TextInput
+              style={[styles.input]}
+              multiline
+              editable={false}
+              value={chamado.descricao}
+            />
+          </View>
 
-        {permissaoAnalista ? (
+          {permissaoAnalista ? (
+            <Pressable
+              style={styles.button_cadastrar}
+              onPress={() => atualizarChamado()}
+            >
+              <Text style={styles.btn_text_imagem}>Salvar</Text>
+            </Pressable>
+          ) : null}
+
+          <View style={styles.container}>
+            <Text style={styles.label}>Mensagens</Text>
+            <TextInput
+              style={[styles.input]}
+              multiline
+              editable={true}
+              placeholder="Digite uma mensagem para enviar!"
+              onChangeText={(item) => setMensagem(item)}
+            />
+          </View>
+
           <Pressable
             style={styles.button_cadastrar}
-            onPress={() => atualizarChamado()}
+            onPress={() => enviarMensagem()}
           >
-            <Text style={styles.btn_text_imagem}>Salvar</Text>
+            <Text style={styles.btn_text_imagem}>Enviar Mensagem</Text>
           </Pressable>
-        ) : null}
 
-        <View style={styles.container}>
-          <Text style={styles.label}>Mensagens</Text>
-          <TextInput
-            style={[styles.input]}
-            multiline
-            editable={true}
-            placeholder="Digite uma mensagem para enviar!"
-            onChangeText={(item) => setMensagem(item)}
-          />
+          <View style={styles.container}>
+            <Text style={styles.label}>Histórico</Text>
+            <>
+              {listaMensagens.map((item, index) => (
+                <View key={index} style={styles.historico}>
+                  <Text style={{ fontWeight: "bold" }}>Mensagem: </Text>
+                  <Text>{item.mensagem} </Text>
+                  <Text style={{ fontWeight: "bold" }}>Data: </Text>
+                  <Text>{item.dataMensagem} </Text>
+                  <Text style={{ fontWeight: "bold" }}>Enviado por: </Text>
+                  <Text>{item.enviadoPor}</Text>
+                </View>
+              ))}
+            </>
+          </View>
         </View>
-
-        <Pressable
-          style={styles.button_cadastrar}
-          onPress={() => enviarMensagem()}
-        >
-          <Text style={styles.btn_text_imagem}>Enviar Mensagem</Text>
-        </Pressable>
-
-        <View style={styles.container}>
-          <Text style={styles.label}>Histórico</Text>
-          <>
-            {listaMensagens.map((item, index) => (
-              <View key={index} style={styles.historico}>
-                <Text style={{ fontWeight: "bold" }}>Mensagem: </Text>
-                <Text>{item.mensagem} </Text>
-                <Text style={{ fontWeight: "bold" }}>Data: </Text>
-                <Text>{item.dataMensagem} </Text>
-                <Text style={{ fontWeight: "bold" }}>Enviado por: </Text>
-                <Text>{item.enviadoPor}</Text>
-              </View>
-            ))}
-          </>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </AlertNotificationRoot>
   );
 }
 
